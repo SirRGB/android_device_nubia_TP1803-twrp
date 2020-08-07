@@ -28,3 +28,7 @@ PRODUCT_NAME := omni_TP1803
 PRODUCT_BRAND := Nubia
 PRODUCT_MODEL := Nubia Mini 5G
 PRODUCT_MANUFACTURER := Nubia
+
+# HACK: Set vendor patch level
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.vendor.build.security_patch=2099-12-31
