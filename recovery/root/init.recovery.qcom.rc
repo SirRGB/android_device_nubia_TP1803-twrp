@@ -43,13 +43,7 @@ on init
     write /config/usb_gadget/g1/os_desc/b_vendor_code 0x1
     write /config/usb_gadget/g1/os_desc/qw_sign "MSFT100"
     setprop sys.usb.configfs 1
-
-    mkdir /system/bin
-    mkdir /system/etc
-    symlink /system/etc /etc
-    symlink /sbin/busybox /system/bin/sh
-    symlink /vendor/manifest.xml /system/manifest.xml
-
+    symlink /persist /mnt/vendor/persist
     start hwservicemanager
     setprop crypto.ready 1
 
@@ -126,16 +120,37 @@ service keymaster-4-0 /sbin/android.hardware.keymaster@4.0-service-qti
     disabled
     seclabel u:r:recovery:s0
 
+service spdaemon /sbin/spdaemon
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
+service sec_nvm /sbin/sec_nvm
+    user root
+    group root
+    disabled
+    seclabel u:r:recovery:s0
+
 on property:crypto.ready=0
     stop sbinqseecomd
     stop keymaster-4-0
     stop gatekeeper-1-0
+    stop spdaemon
+    stop sec_nvm
     stop servicemanager
 
 on property:crypto.ready=1
     start sbinqseecomd
 
 on property:vendor.sys.listeners.registered=true
+    # Mount persist and firmware for sec_nvm
+    # Using fstab mounttodecrypt TWRP flag doesn't help since
+    # it mounts partition only when starting decryption
+    mount ext4 /dev/block/bootdevice/by-name/persist /persist
+    mount vfat /dev/block/bootdevice/by-name/modem /firmware
+    start spdaemon
+    start sec_nvm
     start keymaster-4-0
     start gatekeeper-1-0
     start servicemanager
