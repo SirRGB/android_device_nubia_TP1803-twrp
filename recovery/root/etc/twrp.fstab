@@ -5,6 +5,8 @@
 /system		ext4	/dev/block/bootdevice/by-name/system					flags=backup=0
 /system_image	emmc	/dev/block/bootdevice/by-name/system
 /vendor		ext4	/dev/block/bootdevice/by-name/vendor					flags=display="Vendor";backup=0;wipeingui
+/persist      ext4          /dev/block/bootdevice/by-name/persist        flags=backup=1;display="Persist"
+/keymaster    emmc          /dev/block/bootdevice/by-name/keymaster
 /vendor_image	emmc	/dev/block/bootdevice/by-name/vendor
 /data		f2fs	/dev/block/bootdevice/by-name/userdata
 /firmware	vfat	/dev/block/bootdevice/by-name/modem					flags=display="Firmware";fsflags=ro
